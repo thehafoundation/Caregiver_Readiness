@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caregiver Readiness Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #E7EFEF;
+    --surface: #F7FBFB;
+    --surface-raised: #FFFFFF;
+    --ink: #1E2E30;
+    --ink-soft: #5D7274;
+    --ink-faint: #96A6A8;
+    --forest: #2C6E74;
+    --forest-deep: #1D4C51;
+    --ochre: #C4863A;
+    --rose: #B15F52;
+    --line: #CFDEDE;
+    --line-soft: #DFEBEB;
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Source Sans 3', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  #root{
+    max-width:640px;
+    margin:0 auto;
+    padding:48px 24px 80px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  @media (max-width:480px){
+    #root{padding:32px 18px 64px;}
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--forest);
+    font-weight:500;
+    margin:0 0 14px;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    line-height:1.15;
+    margin:0;
+    color:var(--ink);
+  }
+  h1{font-size:34px; letter-spacing:-0.01em;}
+  h2{font-size:26px;}
+  h3{font-size:19px; font-weight:500;}
+  p{line-height:1.6; color:var(--ink-soft); margin:0;}
+  .lede{font-size:17px; color:var(--ink-soft); margin-top:14px;}
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius);
+    padding:32px;
+  }
+  @media (max-width:480px){ .card{padding:24px 20px;} }
+  .btn{
+    font-family:'Source Sans 3', sans-serif;
+    font-size:15px;
+    font-weight:600;
+    border:none;
+    border-radius:9px;
+    padding:14px 26px;
+    cursor:pointer;
+    transition:transform .12s ease, opacity .12s ease;
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn:focus-visible{outline:2px solid var(--forest); outline-offset:3px;}
+  .btn-primary{background:var(--forest); color:#F5F3EA;}
+  .btn-primary:hover{background:var(--forest-deep);}
+  .btn-ghost{background:transparent; color:var(--forest); border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--forest);}
+  .btn-full{width:100%;}
+  .screen{display:flex; flex-direction:column; gap:24px; flex:1;}
+  .top-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;}
+  .step-label{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--ink-faint);}
+  .progress-track{
+    height:4px; width:100%; background:var(--line-soft); border-radius:2px; overflow:hidden; margin-top:10px;
+  }
+  .progress-fill{height:100%; background:var(--forest); border-radius:2px; transition:width .35s ease;}
+  .dim-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ochre);
+    margin-bottom:10px;
+    font-weight:500;
+  }
+  .q-text{font-family:'Fraunces', serif; font-size:23px; font-weight:500; line-height:1.35; margin-bottom:26px;}
+  .scale{display:flex; flex-direction:column; gap:10px;}
+  .scale-btn{
+    text-align:left;
+    background:var(--surface-raised);
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:15px 18px;
+    font-size:15.5px;
+    font-family:'Source Sans 3', sans-serif;
+    color:var(--ink);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .scale-btn:hover{border-color:var(--forest); background:#EBF4F4;}
+  .scale-btn .mark{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-faint);
+  }
+  .nav-row{display:flex; justify-content:space-between; align-items:center; margin-top:4px;}
+  .link-btn{
+    background:none; border:none; color:var(--ink-faint); font-size:14px; cursor:pointer;
+    font-family:'Source Sans 3', sans-serif; padding:4px;
+  }
+  .link-btn:hover{color:var(--ink-soft);}
+
+  /* Intro */
+  .pillars-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:20px;}
+  .pillar-chip{
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--forest);
+    background:#DCEBEB; border-radius:20px; padding:6px 13px;
+  }
+  .meta-row{display:flex; gap:22px; margin-top:26px; padding-top:22px; border-top:1px solid var(--line-soft);}
+  .meta-item{display:flex; flex-direction:column; gap:2px;}
+  .meta-num{font-family:'Fraunces', serif; font-size:22px; color:var(--forest-deep);}
+  .meta-label{font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.06em;}
+
+  /* Results */
+  .gauge-wrap{display:flex; flex-direction:column; align-items:center; padding:12px 0 8px;}
+  .gauge-score{font-family:'Fraunces', serif; font-size:56px; color:var(--forest-deep); line-height:1;}
+  .gauge-max{font-family:'IBM Plex Mono', monospace; font-size:14px; color:var(--ink-faint);}
+  .verdict-badge{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.06em; text-transform:uppercase;
+    background:var(--ochre); color:#fff; padding:6px 14px; border-radius:20px; margin-top:12px; font-weight:500;
+  }
+  .verdict-desc{text-align:center; max-width:420px; margin-top:14px;}
+
+  .dim-bar-row{display:flex; align-items:center; gap:14px; padding:11px 0;}
+  .dim-bar-label{width:168px; flex-shrink:0; font-size:13.5px; color:var(--ink); font-weight:500;}
+  .dim-bar-track{flex:1; height:8px; background:var(--line-soft); border-radius:4px; overflow:hidden; position:relative;}
+  .dim-bar-fill{height:100%; border-radius:4px;}
+  .dim-bar-score{width:34px; text-align:right; font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--ink-soft); flex-shrink:0;}
+
+  .section-heading{display:flex; align-items:baseline; gap:10px; margin:34px 0 4px;}
+  .section-heading .eyebrow{margin:0;}
+  hr.rule{border:none; border-top:1px solid var(--line-soft); margin:28px 0;}
+
+  .strength-gap-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;}
+  @media (max-width:480px){.strength-gap-grid{grid-template-columns:1fr;}}
+  .sg-card{border-radius:10px; padding:18px; border:1px solid var(--line-soft);}
+  .sg-card.strength{background:#E6F1F1;}
+  .sg-card.gap{background:#F6ECE7;}
+  .sg-label{font-family:'IBM Plex Mono', monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px; font-weight:500;}
+  .sg-card.strength .sg-label{color:var(--forest-deep);}
+  .sg-card.gap .sg-label{color:var(--rose);}
+  .sg-dim{font-family:'Fraunces', serif; font-size:17px; margin-bottom:2px;}
+
+  .action-item{display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--line-soft);}
+  .action-item:last-child{border-bottom:none;}
+  .action-num{font-family:'Fraunces', serif; font-size:19px; color:var(--ochre); flex-shrink:0; width:22px;}
+  .action-text{font-size:14.5px; color:var(--ink); line-height:1.55;}
+  .action-dim{font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--ink-faint); text-transform:uppercase; margin-top:4px; display:block;}
+
+  .unlock-card{
+    background:var(--forest-deep); color:#F2F0E5; border-radius:var(--radius); padding:30px 28px; margin-top:30px;
+  }
+  .unlock-card h3{color:#F2F0E5;}
+  .unlock-card p{color:#C9D2C3; margin-top:8px;}
+  .unlock-card .btn-primary{background:#F2F0E5; color:var(--forest-deep); margin-top:18px;}
+  .unlock-card .btn-primary:hover{background:#fff;}
+  .unlock-meta{font-family:'IBM Plex Mono', monospace; font-size:11px; color:#8FB3B6; margin-top:16px; letter-spacing:0.04em;}
+
+  .workshop-card{
+    background:var(--surface-raised); border:1.5px solid var(--forest); border-radius:var(--radius);
+    padding:28px; margin-top:20px; text-align:center;
+  }
+  .workshop-card h3{margin-bottom:8px;}
+  .workshop-card p{margin-bottom:18px;}
+
+  .fade-in{animation:fadeIn .3s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+// ---------- Data ----------
+const SCALE = [
+  {label:'Always', value:4},
+  {label:'Often', value:3},
+  {label:'Sometimes', value:2},
+  {label:'Rarely', value:1},
+  {label:'Never', value:0},
+];
+
+const DIMENSIONS = [
+  {
+    key:'awareness', label:'Awareness & Preparedness',
+    questions:[
+      "I understand how my parent's or loved one's health needs are likely to change as they age.",
+      "I have thought about what caregiving might require of me in the next five years.",
+      "I know the early warning signs of common age-related conditions, like memory loss or reduced mobility.",
+      "I have talked with my family about what caregiving might look like in the future.",
+      "I feel confident I could step into a caregiving role if it were needed today.",
+      "I have looked into what caregiving typically involves, before being asked to do it.",
+      "I revisit my caregiving plans as my loved one's situation changes."
+    ],
+    actions:[
+      "Write down what a typical caregiving week could look like, based on your loved one's current needs.",
+      "Start a conversation with your family about future care responsibilities, before it becomes urgent."
+    ]
+  },
+  {
+    key:'medical', label:'Health & Medical Readiness',
+    questions:[
+      "I know my loved one's full medical history, including conditions, allergies, and past surgeries.",
+      "I understand the medications they take and why.",
+      "I know how to reach their doctors and specialists directly.",
+      "I have a plan for medical emergencies: who to call, and where to go.",
+      "I keep their health records organized and accessible.",
+      "I track or attend their doctor consultations.",
+      "I understand what their insurance does and does not cover medically."
+    ],
+    actions:[
+      "Create a single document with your loved one's medical history, medications, and doctor contacts.",
+      "Set up a plan for medical emergencies: who to call, nearest hospital, and who has authority to act."
+    ]
+  },
+  {
+    key:'daily', label:'Daily Care Capability',
+    questions:[
+      "I feel confident helping with day-to-day needs like meals, mobility, or personal care, if required.",
+      "I have checked their home for safety risks, like falls, fire hazards, or accessibility gaps.",
+      "I know how to arrange transportation for their appointments or errands.",
+      "I can recognize when their daily wellbeing is declining.",
+      "I know their daily routine well enough to notice when something is off.",
+      "I have a backup plan for daily care on days I am unavailable.",
+      "I understand their dietary needs and restrictions."
+    ],
+    actions:[
+      "Walk through your loved one's home and note fall risks, lighting, and accessibility gaps.",
+      "Identify a backup plan for daily care on days you are unavailable."
+    ]
+  },
+  {
+    key:'coordination', label:'Care Coordination',
+    questions:[
+      "I could coordinate appointments, schedules, and care tasks without things falling through the cracks.",
+      "My family has discussed who does what when caregiving is needed.",
+      "I know how to find and vet professional caregivers or home health aides, if needed.",
+      "I keep important documents, like ID, insurance, and medical records, organized in one place.",
+      "I have a system for tracking multiple ongoing responsibilities related to their care.",
+      "I know what local or professional care services are available to us.",
+      "I could step in and coordinate care even under time pressure."
+    ],
+    actions:[
+      "Set up a shared family calendar or document to track appointments and responsibilities.",
+      "Research two or three professional caregiving services in your loved one's area, before you need them."
+    ]
+  },
+  {
+    key:'emotional', label:'Emotional Readiness',
+    questions:[
+      "I can stay calm and patient during stressful caregiving moments.",
+      "I feel emotionally prepared for the changes caregiving might bring to my life.",
+      "I know how to recognize the early signs of caregiver burnout in myself.",
+      "I can have difficult conversations with my loved one about their care.",
+      "I have people I can talk to when caregiving feels overwhelming.",
+      "I make time to manage my own stress and wellbeing.",
+      "I feel prepared for the emotional weight of watching a loved one age or decline."
+    ],
+    actions:[
+      "Identify one person you can call when caregiving feels overwhelming, before you need them.",
+      "Learn the early signs of caregiver burnout, so you can recognize them in yourself."
+    ]
+  },
+  {
+    key:'financial', label:'Financial & Legal Readiness',
+    questions:[
+      "I have a realistic sense of what caregiving is likely to cost.",
+      "I know what health insurance and government schemes apply to my loved one.",
+      "I understand our financial options if long-term care becomes necessary.",
+      "Essential legal documents, like a will, power of attorney, and medical directives, are in place.",
+      "I have thought about how caregiving costs might affect my own finances.",
+      "I know what government benefits or schemes we may be eligible for.",
+      "I have a financial plan in place specifically for caregiving needs."
+    ],
+    actions:[
+      "Get a realistic estimate of monthly caregiving costs for your loved one's likely needs.",
+      "Check that a will, power of attorney, and medical directive are in place and accessible."
+    ]
+  },
+  {
+    key:'support', label:'Support Network',
+    questions:[
+      "I have family members I can rely on to share caregiving responsibilities.",
+      "I know who to call in a caregiving emergency, beyond immediate family.",
+      "I am aware of community or local resources available to caregivers.",
+      "I have friends or neighbours who could step in if I needed help.",
+      "I know what professional support services exist near where my loved one lives.",
+      "I do not feel like I am carrying caregiving responsibility alone.",
+      "I have connected with other caregivers who understand what I am going through."
+    ],
+    actions:[
+      "List every person or service you could call on in a caregiving emergency.",
+      "Connect with one other caregiver to learn from their experience."
+    ]
+  },
+];
+
+const TEASER_COUNT_PER_DIM = 2;
+
+function buildFlatQuestions(includeFullOnly){
+  const flat = [];
+  DIMENSIONS.forEach(dim=>{
+    const count = includeFullOnly ? dim.questions.length : TEASER_COUNT_PER_DIM;
+    for(let i=0;i<count;i++){
+      flat.push({dimKey:dim.key, dimLabel:dim.label, text:dim.questions[i]});
+    }
+  });
+  return flat;
+}
+
+function readinessTier(score){
+  if(score>=81) return {label:'Care Ready', desc:"Strong preparedness, with a few things worth refining."};
+  if(score>=61) return {label:'Developing', desc:"A good foundation, with a few critical gaps to close."};
+  if(score>=41) return {label:'Emerging', desc:"Moderate readiness. A structured plan will help."};
+  if(score>=21) return {label:'Early Stage', desc:"Limited preparedness. Meaningful planning is needed soon."};
+  return {label:'Beginning the Journey', desc:"Little preparation yet. Now is the right time to start."};
+}
+
+function barColor(score){
+  if(score>=61) return 'var(--forest)';
+  if(score>=41) return 'var(--ochre)';
+  return 'var(--rose)';
+}
+
+// ---------- State ----------
+let state = {
+  screen:'intro', // intro | quiz | teaserResults | fullIntro | fullQuiz | fullResults
+  answers:{}, // index (in current flat list) -> value
+  quizIndex:0,
+  flatQuestions:[],
+};
+
+const root = document.getElementById('root');
+
+function computeDimensionScores(answersMap, flatList){
+  const sums = {}; const counts = {};
+  DIMENSIONS.forEach(d=>{sums[d.key]=0; counts[d.key]=0;});
+  flatList.forEach((q, i)=>{
+    if(answersMap[i] !== undefined){
+      sums[q.dimKey]+=answersMap[i];
+      counts[q.dimKey]+=1;
+    }
+  });
+  const scores = {};
+  DIMENSIONS.forEach(d=>{
+    scores[d.key] = counts[d.key]>0 ? Math.round((sums[d.key]/(counts[d.key]*4))*100) : 0;
+  });
+  return scores;
+}
+
+function overallScore(dimScores){
+  const vals = Object.values(dimScores);
+  return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+}
+
+// ---------- Renderers ----------
+function render(){
+  root.innerHTML = '';
+  if(state.screen==='intro') root.appendChild(renderIntro());
+  else if(state.screen==='quiz') root.appendChild(renderQuiz(false));
+  else if(state.screen==='teaserResults') root.appendChild(renderResults(false));
+  else if(state.screen==='fullQuiz') root.appendChild(renderQuiz(true));
+  else if(state.screen==='fullResults') root.appendChild(renderResults(true));
+}
+
+function el(tag, cls, html){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(html!==undefined) e.innerHTML = html;
+  return e;
+}
+
+function renderIntro(){
+  const wrap = el('div','screen fade-in');
+
+  const eyebrow = el('div','eyebrow','THE HEALTHY AGING FOUNDATION');
+  wrap.appendChild(eyebrow);
+
+  const h = el('h1', null, 'Caregiver Readiness Assessment');
+  wrap.appendChild(h);
+
+  const lede = el('p','lede', "If caregiving became part of your life tomorrow, how prepared would you be? Answer honestly. There are no wrong answers, only a clearer picture of where to focus.");
+  wrap.appendChild(lede);
+
+  const card = el('div','card');
+  const pillarsLabel = el('div', null, '<p style="font-size:13.5px; color:var(--ink-faint); font-family:\'IBM Plex Mono\',monospace; text-transform:uppercase; letter-spacing:0.06em;">Seven dimensions of readiness</p>');
+  card.appendChild(pillarsLabel);
+  const chips = el('div','pillars-row');
+  DIMENSIONS.forEach(d=>{
+    chips.appendChild(el('span','pillar-chip', d.label));
+  });
+  card.appendChild(chips);
+
+  const meta = el('div','meta-row');
+  meta.appendChild(metaItem('3 min', 'Quick check'));
+  meta.appendChild(metaItem('14', 'Questions'));
+  meta.appendChild(metaItem('7', 'Dimensions scored'));
+  card.appendChild(meta);
+
+  wrap.appendChild(card);
+
+  const btn = el('button','btn btn-primary btn-full','Start the quick check');
+  btn.style.marginTop = '4px';
+  btn.style.padding = '16px';
+  btn.style.fontSize = '16px';
+  btn.onclick = ()=>{
+    state.flatQuestions = buildFlatQuestions(false);
+    state.answers = {};
+    state.quizIndex = 0;
+    state.screen = 'quiz';
+    render();
+  };
+  wrap.appendChild(btn);
+
+  const note = el('p', null, '');
+  note.style.fontSize = '13px';
+  note.style.color = 'var(--ink-faint)';
+  note.style.textAlign = 'center';
+  note.textContent = "This is not a test. It does not evaluate how good a caregiver you are.";
+  wrap.appendChild(note);
+
+  return wrap;
+}
+
+function metaItem(num,label){
+  const m = el('div','meta-item');
+  m.appendChild(el('div','meta-num', num));
+  m.appendChild(el('div','meta-label', label));
+  return m;
+}
+
+function renderQuiz(isFull){
+  const wrap = el('div','screen fade-in');
+  const flat = state.flatQuestions;
+  const idx = state.quizIndex;
+  const q = flat[idx];
+  const total = flat.length;
+
+  const topRow = el('div','top-row');
+  const stepLabel = el('div','step-label', `Question ${idx+1} of ${total}`);
+  topRow.appendChild(stepLabel);
+  const skipBtn = el('button','link-btn','Exit');
+  skipBtn.onclick = ()=>{
+    if(confirm('Leave the assessment? Your progress on this run will be lost.')){
+      state.screen='intro'; render();
+    }
+  };
+  topRow.appendChild(skipBtn);
+  wrap.appendChild(topRow);
+
+  const progressTrack = el('div','progress-track');
+  const progressFill = el('div','progress-fill');
+  progressFill.style.width = `${Math.round(((idx)/total)*100)}%`;
+  progressTrack.appendChild(progressFill);
+  wrap.appendChild(progressTrack);
+
+  const card = el('div','card');
+  card.appendChild(el('div','dim-tag', q.dimLabel));
+  card.appendChild(el('div','q-text', q.text));
+
+  const scale = el('div','scale');
+  SCALE.forEach(opt=>{
+    const b = el('button','scale-btn');
+    b.innerHTML = `<span>${opt.label}</span>`;
+    b.onclick = ()=>{
+      state.answers[idx] = opt.value;
+      if(idx+1 < total){
+        state.quizIndex = idx+1;
+        render();
+      } else {
+        state.screen = isFull ? 'fullResults' : 'teaserResults';
+        render();
+      }
+    };
+    scale.appendChild(b);
+  });
+  card.appendChild(scale);
+  wrap.appendChild(card);
+
+  if(idx>0){
+    const nav = el('div','nav-row');
+    const back = el('button','link-btn','Back');
+    back.onclick = ()=>{ state.quizIndex = idx-1; render(); };
+    nav.appendChild(back);
+    wrap.appendChild(nav);
+  }
+
+  return wrap;
+}
+
+function renderResults(isFull){
+  const flat = state.flatQuestions;
+  const dimScores = computeDimensionScores(state.answers, flat);
+  const overall = overallScore(dimScores);
+  const tier = readinessTier(overall);
+
+  const wrap = el('div','screen fade-in');
+
+  const eyebrow = el('div','eyebrow', isFull ? 'YOUR FULL CAREGIVER READINESS PROFILE' : 'YOUR QUICK CHECK RESULTS');
+  wrap.appendChild(eyebrow);
+
+  const card = el('div','card');
+
+  const gaugeWrap = el('div','gauge-wrap');
+  gaugeWrap.appendChild(el('div','gauge-score', overall));
+  gaugeWrap.appendChild(el('div','gauge-max', 'out of 100'));
+  gaugeWrap.appendChild(el('div','verdict-badge', tier.label));
+  gaugeWrap.appendChild(el('p','verdict-desc', tier.desc));
+  card.appendChild(gaugeWrap);
+
+  const dimHeading = el('div','section-heading');
+  dimHeading.appendChild(el('div','eyebrow','Dimension breakdown'));
+  card.appendChild(dimHeading);
+
+  const dimsSorted = [...DIMENSIONS].sort((a,b)=>dimScores[b.key]-dimScores[a.key]);
+  dimsSorted.forEach(d=>{
+    const s = dimScores[d.key];
+    const row = el('div','dim-bar-row');
+    row.appendChild(el('div','dim-bar-label', d.label));
+    const track = el('div','dim-bar-track');
+    const fill = el('div','dim-bar-fill');
+    fill.style.width = s+'%';
+    fill.style.background = barColor(s);
+    track.appendChild(fill);
+    row.appendChild(track);
+    row.appendChild(el('div','dim-bar-score', s));
+    card.appendChild(row);
+  });
+
+  wrap.appendChild(card);
+
+  // Strength / Gap
+  const strongest = dimsSorted[0];
+  const weakest = dimsSorted[dimsSorted.length-1];
+  const sgGrid = el('div','strength-gap-grid');
+  const sCard = el('div','sg-card strength');
+  sCard.appendChild(el('div','sg-label','Key strength'));
+  sCard.appendChild(el('div','sg-dim', strongest.label));
+  sCard.appendChild(el('p', null, `Scoring ${dimScores[strongest.key]}, this is where you're most prepared today.`));
+  sgGrid.appendChild(sCard);
+
+  const gCard = el('div','sg-card gap');
+  gCard.appendChild(el('div','sg-label','Priority gap'));
+  gCard.appendChild(el('div','sg-dim', weakest.label));
+  gCard.appendChild(el('p', null, `Scoring ${dimScores[weakest.key]}, this is the area to focus on first.`));
+  sgGrid.appendChild(gCard);
+  wrap.appendChild(sgGrid);
+
+  if(isFull){
+    // Full recommendations: bottom 3 dimensions
+    const bottom3 = dimsSorted.slice(-3);
+    let actions = [];
+    bottom3.forEach((d,i)=>{
+      const take = i<2 ? 2 : 1; // 2+2+1 = 5
+      d.actions.slice(0,take).forEach(a=>actions.push({text:a, dim:d.label}));
+    });
+    actions = actions.slice(0,5);
+
+    const actHeading = el('div','section-heading');
+    actHeading.appendChild(el('div','eyebrow','Your top 5 recommended actions'));
+    wrap.appendChild(actHeading);
+
+    const actCard = el('div','card');
+    actions.forEach((a,i)=>{
+      const item = el('div','action-item');
+      item.appendChild(el('div','action-num', String(i+1).padStart(2,'0')));
+      const textWrap = el('div');
+      textWrap.appendChild(el('div','action-text', a.text));
+      textWrap.appendChild(el('span','action-dim', a.dim));
+      item.appendChild(textWrap);
+      actCard.appendChild(item);
+    });
+    wrap.appendChild(actCard);
+
+    // Workshop CTA
+    const workshop = el('div','workshop-card');
+    workshop.appendChild(el('h3', null, 'Turn this into a plan'));
+    workshop.appendChild(el('p', null, "The Caregiver Readiness Workshop walks through each of your priority gaps and builds a practical roadmap, with people in the same situation."));
+    const wBtn = el('button','btn btn-primary','Reserve my spot');
+    wBtn.onclick = ()=>{ alert('This connects to your registration flow. Placeholder for now.'); };
+    workshop.appendChild(wBtn);
+    wrap.appendChild(workshop);
+
+  } else {
+    // Teaser -> unlock full
+    const unlock = el('div','unlock-card');
+    unlock.appendChild(el('h3', null, 'This is a quick read. Your full profile goes deeper.'));
+    unlock.appendChild(el('p', null, "35 more questions across the same 7 dimensions, for a complete score, your top strengths and gaps, and 5 recommended actions built for your situation."));
+    const uBtn = el('button','btn btn-primary','Unlock my full profile — 10 min');
+    uBtn.onclick = ()=>{
+      const fullFlat = buildFlatQuestions(true);
+      // carry forward teaser answers by matching dimension + question text position
+      const newAnswers = {};
+      fullFlat.forEach((q,i)=>{
+        // find matching teaser answer if this question was in teaser set
+        const teaserIdx = state.flatQuestions.findIndex(tq=>tq.dimKey===q.dimKey && tq.text===q.text);
+        if(teaserIdx!==-1 && state.answers[teaserIdx]!==undefined){
+          newAnswers[i] = state.answers[teaserIdx];
+        }
+      });
+      state.flatQuestions = fullFlat;
+      state.answers = newAnswers;
+      // resume at first unanswered question
+      let resumeIdx = fullFlat.findIndex((q,i)=>newAnswers[i]===undefined);
+      state.quizIndex = resumeIdx===-1 ? 0 : resumeIdx;
+      state.screen = 'fullQuiz';
+      render();
+    };
+    unlock.appendChild(uBtn);
+    unlock.appendChild(el('div','unlock-meta','Your answers so far are saved. You will not repeat these 14 questions.'));
+    wrap.appendChild(unlock);
+  }
+
+  const restartBtn = el('button','btn btn-ghost btn-full');
+  restartBtn.textContent = 'Start over';
+  restartBtn.style.marginTop = '12px';
+  restartBtn.onclick = ()=>{ state = {screen:'intro', answers:{}, quizIndex:0, flatQuestions:[]}; render(); };
+  wrap.appendChild(restartBtn);
+
+  return wrap;
+}
+
+render();
+</script>
+</body>
+</html>
